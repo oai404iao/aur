@@ -5,9 +5,9 @@ set -euo pipefail
 # 用法: ./update-pkgbuild.sh [--force]
 #
 # 安全说明：
-#   脚本会优先寻找 release 里附带的独立校验文件（*.sha256、SHA256SUMS、
-#   checksums.txt 等）来验证下载的 .deb；如果没有找到，会提示风险并
-#   要求人工确认，因为本地计算的 hash 不能保证二进制未被篡改。
+#   脚本会从 GitHub Release API 读取 .deb 的 digest（sha256），下载后
+#   本地重新计算并比对；只有完全一致才更新 PKGBUILD。如果上游没有
+#   digest，则提示风险并要求人工确认。
 
 repo='ProxyShard/ShardBrowser'
 pkgbuild='PKGBUILD'
@@ -27,50 +27,41 @@ echo "=> 最新版本: ${version}"
 debfile="ShardX.Launcher_${version}_amd64.deb"
 deburl="https://github.com/${repo}/releases/download/${tag}/${debfile}"
 
-echo '=> 下载 .deb...'
-curl -fsSL -o "${debfile}" "${deburl}"
+# 从 GitHub API 读取官方 digest
+expected_digest=$(printf '%s' "$release_json" | jq -r --arg name "${debfile}" '.assets[] | select(.name == $name) | .digest')
 
-# 尝试寻找并验证上游独立校验文件
-echo '=> 查找上游校验文件...'
-mapfile -t checksum_assets < <(printf '%s' "$release_json" | jq -r '
-  .assets[] |
-  select(.name | test("sha(256|512)|checksum|sums"; "i")) |
-  .name
-')
-
-verified=0
-for asset in "${checksum_assets[@]}"; do
-  case "${asset}" in
-    *"${debfile}"*.sha256|*"${debfile}"*.sha512|SHA256SUMS|SHA512SUMS|checksums.txt|checksums.sha256|checksums.sha512)
-      echo "   发现校验文件: ${asset}"
-      curl -fsSL -o "${asset}" "https://github.com/${repo}/releases/download/${tag}/${asset}"
-      if sha256sum --check --strict "${asset}" 2>/dev/null | grep -q "${debfile}: OK" || \
-         sha512sum --check --strict "${asset}" 2>/dev/null | grep -q "${debfile}: OK"; then
-        echo '   上游校验通过'
-        verified=1
-      else
-        echo "!! 警告：${asset} 未能验证 ${debfile}" >&2
-      fi
-      rm -f "${asset}"
-      ;;
-  esac
-done
-
-if [[ "$verified" -eq 0 ]]; then
-  echo '!! 上游 release 未提供该 .deb 的独立校验文件。' >&2
+if [[ -z "$expected_digest" || "$expected_digest" == 'null' ]]; then
+  echo '!! 上游 release 没有提供该 .deb 的 digest。' >&2
   echo '   本地计算的 hash 只能保证文件完整性，不能保证未被篡改。' >&2
   if [[ "$force" -eq 0 ]]; then
     echo -n '   是否仍要更新 PKGBUILD? [y/N] ' >&2
     read -r ans
-    [[ "$ans" =~ ^[Yy]$ ]] || { rm -f "${debfile}"; exit 1; }
+    [[ "$ans" =~ ^[Yy]$ ]] || exit 1
   else
     echo '   --force 已设置，跳过确认。' >&2
   fi
+  expected_digest=''
+else
+  echo "=> 官方 digest: ${expected_digest}"
 fi
 
+echo '=> 下载 .deb...'
+curl -fsSL -o "${debfile}" "${deburl}"
+
 deb_sha=$(sha256sum "${debfile}" | awk '{print $1}')
+echo "=> 本地 sha256: sha256:${deb_sha}"
+
+if [[ -n "$expected_digest" ]]; then
+  if [[ "sha256:${deb_sha}" == "$expected_digest" ]]; then
+    echo '=> digest 验证通过'
+  else
+    echo '!! digest 不匹配，下载文件可能已被篡改。' >&2
+    rm -f "${debfile}"
+    exit 1
+  fi
+fi
+
 rm -f "${debfile}"
-echo "=> .deb sha256: ${deb_sha}"
 
 echo '=> 获取 LICENSE sha256...'
 license_url="https://raw.githubusercontent.com/${repo}/${tag}/LICENSE"
