@@ -1,7 +1,7 @@
 # Maintainer: ProxyShard <support@proxyshard.com>
 
 pkgname=shardx-launcher-bin
-pkgver=0.1.10
+pkgver=2.0.1
 pkgrel=1
 pkgdesc='Anti-detect browser launcher for the ShardX Chromium engine'
 arch=('x86_64')
@@ -47,7 +47,7 @@ source=(
 )
 noextract=("${_debfile}")
 sha256sums=(
-  '45291d0129193621f62f34f983e3547d06c1e91f733060feedab899c990234a2'
+  '88b143f6f048424646e832ac0e8b50f1a87f3d9408011c61e9a6e43f0e7fc011'
   '2025860f56aed0594d00ae13af01f36529e4dc46f1967f7f274b33631f94edb1'
 )
 
