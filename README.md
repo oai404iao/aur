@@ -43,7 +43,8 @@ git remote set-url --push aur-dingtalk disabled://aur-publishing-not-configured
 ```
 
 当前迁移后的本地仓库已配置上述 remote，并设置 `push.default=nothing`。
-没有 monorepo 的 `origin`；以后可单独添加自己的托管地址，
+monorepo 的 `origin` 为公开仓库 [oai404iao/aur](https://github.com/oai404iao/aur)；
+向自己的 GitHub 仓库同步时显式使用 `git push origin main`。
 不要把整仓推到旧 shardbrowser 仓库或 AUR。
 
 工作区干净时，从根目录查看上游更新：
