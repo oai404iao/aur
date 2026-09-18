@@ -6,18 +6,49 @@
 - `upstream`：AUR Git 仓库，保留完整提交历史。
 - `local`：本地维护分支，不向 AUR 推送。仓库设置了 `push.default=nothing`，
   防止无参数 `git push` 意外发布；显式指定远程仍可推送，不应对 upstream 使用。
-- 本地修订使用 `pkgrel=1.1`：在上游 `1` 之后、`2` 之前。
+- 本地修订使用 `pkgrel=1.2`：在上游 `1` 之后、`2` 之前。
   上游更新后，基于新的 `pkgrel` 重新选择本地小数修订号。
 
 ## 本地改动
 
-- 启动器使用 `exec` 并完整转发参数；保留用户设置的 Qt 平台和缩放变量，
-  包括显式空值。未设置时沿用上游默认值。
+- 启动器使用 `exec` 并完整转发参数；默认使用 XCB、Fcitx 和 GTK portal，
+  保留用户设置的环境变量，包括显式空值。
 - 修正桌面入口重复键；保留 `dingtalk://` 协议入口。
 - `package()` 复制而不搬走源文件，支持 `makepkg --noextract --force` 重打包。
 - 将宽泛的删库通配符限制到指定 `.so` 库族，并声明其系统替代依赖。
 - 根据 x86_64 DEB 的 ELF 依赖补充 GTK3、NSS、音频和 XCB 后端依赖。
 - 服务协议使用仓库内固定快照，不在构建时访问会变化的在线协议页面。
+
+### 桌面集成
+
+启动器对未设置的变量使用以下默认值，只影响钉钉及其子进程，
+不修改 chezmoi 或桌面全局环境：
+
+```sh
+QT_QPA_PLATFORM=xcb
+QT_IM_MODULE=fcitx
+GTK_IM_MODULE=fcitx
+GTK_USE_PORTAL=1
+QT_AUTO_SCREEN_SCALE_FACTOR=1
+```
+
+Qt 使用包内的 Fcitx 插件，GTK 组件需要系统 `fcitx5-gtk`；
+Fcitx 服务需要在桌面会话中运行。Wayland 会话需要可用的 XWayland。
+GTK 原生文件选择器通过 `xdg-desktop-portal` 使用桌面配置的后端。
+本机 Niri 已配置 `org.freedesktop.impl.portal.FileChooser=gnome;gtk;`，
+包不替用户修改这项配置，也不强制安装某一种后端。
+
+用户已在 Niri 会话验证上述四项桌面集成变量可解决输入法和文件选择器问题。
+其他桌面或输入法可单独覆盖，例如：
+
+```sh
+QT_IM_MODULE=ibus GTK_IM_MODULE=ibus dingtalk
+GTK_USE_PORTAL=0 dingtalk
+```
+
+升级后需从托盘完整退出再启动，已有进程不会获得新的环境变量。
+上游 `MojoThreadServiceDelegate::PostDealyedTask` 的 INFO 日志刷屏
+未在此修订中处理；不丢弃标准错误，也不屏蔽应用日志。
 
 ### 服务协议快照
 
@@ -90,14 +121,14 @@ git commit -m "chore: merge AUR dingtalk-bin update"
 ## 尚待运行验证
 
 - 本轮检查针对 x86_64；保留 aarch64 上游源和校验值，未进行 ARM 构建验证。
-- 默认仍为 `wayland;xcb`。包内只有 XCB 等插件，没有 Wayland 插件；
+- 默认使用 `xcb`。包内只有 XCB 等插件，没有 Wayland 插件；
   系统 `qt5-wayland` 与捆绑 Qt 可能不兼容，安装它不保证原生 Wayland 可用。
-  可尝试 `QT_QPA_PLATFORM=xcb dingtalk`，Wayland 会话需可用的 XWayland。
 - `doctor` 及其 GTK 扩展依赖旧 `libpangox-1.0.so.0`，
   在所检查的 DEB 和本机系统中均未找到。未删诊断程序或伪造库链接；
   这项诊断功能仍有已知加载风险。
-- ELF 检查不能覆盖 `dlopen`、输入法、托盘、文件选择、音视频及会议功能；
-  仍需实际桌面会话测试。不擅自替换内置 Qt/OpenSSL/CEF。
+- ELF 检查不能覆盖所有 `dlopen` 和桌面功能；输入法和文件选择器
+  已有本机用户验证，托盘、音视频及会议功能仍需测试。
+  不擅自替换内置 Qt/OpenSSL/CEF。
 
 ### 初次验证记录（2026-09-18）
 

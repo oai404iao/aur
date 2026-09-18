@@ -23,6 +23,9 @@ class WrapperTests(unittest.TestCase):
             "print(json.dumps({'args': sys.argv[1:], 'pid': os.getpid(),\n"
             " 'shell_pid': int(os.environ['SHELL_PID']),\n"
             " 'platform': os.environ['QT_QPA_PLATFORM'],\n"
+            " 'qt_im': os.environ['QT_IM_MODULE'],\n"
+            " 'gtk_im': os.environ['GTK_IM_MODULE'],\n"
+            " 'portal': os.environ['GTK_USE_PORTAL'],\n"
             " 'scale': os.environ['QT_AUTO_SCREEN_SCALE_FACTOR']}))\n"
             "sys.exit(int(os.environ.get('MOCK_EXIT', '0')))\n"
         )
@@ -30,7 +33,10 @@ class WrapperTests(unittest.TestCase):
 
     def launch(self, args=(), overrides=None, missing_directory=False):
         env = os.environ.copy()
-        for key in ("QT_QPA_PLATFORM", "QT_AUTO_SCREEN_SCALE_FACTOR", "MOCK_EXIT"):
+        for key in (
+            "QT_QPA_PLATFORM", "QT_AUTO_SCREEN_SCALE_FACTOR", "QT_IM_MODULE",
+            "GTK_IM_MODULE", "GTK_USE_PORTAL", "MOCK_EXIT",
+        ):
             env.pop(key, None)
         env.update(overrides or {})
         env["TEST_RELEASE"] = str(self.release)
@@ -53,27 +59,47 @@ class WrapperTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         output = json.loads(result.stdout)
         self.assertEqual(output["args"], args)
-        self.assertEqual(output["platform"], "wayland;xcb")
+        self.assertEqual(output["platform"], "xcb")
+        self.assertEqual(output["qt_im"], "fcitx")
+        self.assertEqual(output["gtk_im"], "fcitx")
+        self.assertEqual(output["portal"], "1")
         self.assertEqual(output["scale"], "1")
         self.assertEqual(output["pid"], output["shell_pid"])
 
     def test_user_overrides(self):
         result = self.launch(overrides={
-            "QT_QPA_PLATFORM": "xcb", "QT_AUTO_SCREEN_SCALE_FACTOR": "0",
+            "QT_QPA_PLATFORM": "wayland", "QT_AUTO_SCREEN_SCALE_FACTOR": "0",
+            "QT_IM_MODULE": "ibus", "GTK_IM_MODULE": "ibus", "GTK_USE_PORTAL": "0",
         })
         self.assertEqual(result.returncode, 0, result.stderr)
         output = json.loads(result.stdout)
-        self.assertEqual(output["platform"], "xcb")
+        self.assertEqual(output["platform"], "wayland")
         self.assertEqual(output["scale"], "0")
+        self.assertEqual(output["qt_im"], "ibus")
+        self.assertEqual(output["gtk_im"], "ibus")
+        self.assertEqual(output["portal"], "0")
 
     def test_explicit_empty_values(self):
         result = self.launch(overrides={
             "QT_QPA_PLATFORM": "", "QT_AUTO_SCREEN_SCALE_FACTOR": "",
+            "QT_IM_MODULE": "", "GTK_IM_MODULE": "", "GTK_USE_PORTAL": "",
         })
         self.assertEqual(result.returncode, 0, result.stderr)
         output = json.loads(result.stdout)
         self.assertEqual(output["platform"], "")
         self.assertEqual(output["scale"], "")
+        self.assertEqual(output["qt_im"], "")
+        self.assertEqual(output["gtk_im"], "")
+        self.assertEqual(output["portal"], "")
+
+    def test_partial_override_keeps_other_defaults(self):
+        result = self.launch(overrides={"GTK_USE_PORTAL": "0"})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        output = json.loads(result.stdout)
+        self.assertEqual(output["portal"], "0")
+        self.assertEqual(output["platform"], "xcb")
+        self.assertEqual(output["qt_im"], "fcitx")
+        self.assertEqual(output["gtk_im"], "fcitx")
 
     def test_exit_status(self):
         self.assertEqual(self.launch(overrides={"MOCK_EXIT": "23"}).returncode, 23)
