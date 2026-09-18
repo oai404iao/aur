@@ -1,0 +1,6 @@
+pkg/
+src/
+*.deb
+*.zst
+*.html
+!service-terms-zh.html
