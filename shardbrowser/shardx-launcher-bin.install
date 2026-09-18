@@ -1,0 +1,12 @@
+post_install() {
+  cat <<'EOF'
+ShardX Launcher is installed.
+
+On first launch it downloads the patched Chromium engine, Widevine CDM,
+and fingerprint library to ~/.config/shardx-launcher.
+EOF
+}
+
+post_upgrade() {
+  post_install
+}

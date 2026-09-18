@@ -1,0 +1,12 @@
+# makepkg artifacts
+*.pkg.tar.*
+*.pkg.tar.*.sig
+pkg/
+src/
+
+# downloaded sources
+*.deb
+*.tar.gz
+*.tar.xz
+*.tar.zst
+LICENSE
