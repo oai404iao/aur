@@ -3,9 +3,9 @@
 基于 [AUR dingtalk-bin](https://aur.archlinux.org/packages/dingtalk-bin)，
 初始基线为 `84473a0`（`8.2.8.260904001-1`）。
 
-- `upstream`：AUR Git 仓库，保留完整提交历史。
-- `local`：本地维护分支，不向 AUR 推送。仓库设置了 `push.default=nothing`，
-  防止无参数 `git push` 意外发布；显式指定远程仍可推送，不应对 upstream 使用。
+- 此目录由根目录 monorepo 管理，主分支为 `main`，不再是独立仓库。
+- `aur-dingtalk`：AUR Git 上游，保留完整提交历史，不向 AUR 推送。
+  仓库布局、公共维护命令和上游同步流程见[根目录 README](../README.md)。
 - 本地修订使用 `pkgrel=1.2`：在上游 `1` 之后、`2` 之前。
   上游更新后，基于新的 `pkgrel` 重新选择本地小数修订号。
 
@@ -64,6 +64,9 @@ https://terms.alicdn.com/legal-agreement/terms/suit_bu1_dingtalk/suit_bu1_dingta
 
 ## 构建与检查
 
+以下命令在 `dingtalk-bin/` 目录执行；根目录也提供统一的 `make check`
+和 `make build-dingtalk-bin`。
+
 ```sh
 bash -n PKGBUILD dingtalk.sh
 desktop-file-validate com.alibabainc.dingtalk.desktop
@@ -93,30 +96,11 @@ git diff --check
 
 ## 查看与合并 AUR 更新
 
-先确保本地改动已提交、工作区干净：
-
-```sh
-git switch local
-git fetch upstream
-git log --oneline HEAD..upstream/master
-git diff HEAD...upstream/master -- PKGBUILD .SRCINFO dingtalk.sh \
-    com.alibabainc.dingtalk.desktop
-```
-
-确认更新范围后再合并，不自动更新、不盲目覆盖本地修复：
-
-```sh
-git merge --no-ff --no-commit upstream/master
-# 审阅/解决冲突，调整本地 pkgrel、源文件校验值和依赖。
-# .SRCINFO 是生成文件：先解决 PKGBUILD，再重新生成。
-makepkg --printsrcinfo > .SRCINFO
-# 执行上面的检查与构建，逐项 git add 确认后的文件。
-git commit -m "chore: merge AUR dingtalk-bin update"
-```
-
-上游同步采用普通 merge，保留上游祖先关系，避免下次重复合并同一批提交；
-不对上游同步使用 squash。放弃尚未提交的合并可用 `git merge --abort`。
-如果上游已修好某个问题，移除等效的本地补丁。
+在 monorepo 根目录执行
+[subtree 上游同步流程](../README.md#更新钉钉的-aur-打包)。
+不要再使用旧独立仓库的 `git merge upstream/master`，否则不是对子目录的合并。
+`.SRCINFO` 是生成文件：先解决 PKGBUILD 冲突，再重新生成。
+不要盲目覆盖本地修复，也不要对上游历史使用 squash。
 
 ## 尚待运行验证
 
