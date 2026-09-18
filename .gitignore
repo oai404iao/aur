@@ -1,0 +1,5 @@
+# Shared makepkg artifacts; package-specific source exclusions stay in each package.
+/*/src/
+/*/pkg/
+/*/*.pkg.tar.*
+/*/*.deb
