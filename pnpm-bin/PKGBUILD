@@ -1,0 +1,55 @@
+# Maintainer: oai404iao <oai404iao@zensky.top>
+
+pkgname=pnpm-bin
+pkgver=12.9.1
+pkgrel=1
+pkgdesc='Fast, disk space efficient package manager (upstream binary)'
+arch=('x86_64')
+url='https://pnpm.io'
+license=('MIT')
+depends=('glibc' 'gcc-libs')
+optdepends=(
+  'nodejs: run Node.js projects and lifecycle scripts'
+  'python: build native addons with bundled node-gyp'
+  'make: build native addons'
+  'gcc: build native addons'
+)
+provides=("pnpm=$pkgver")
+conflicts=('pnpm')
+options=('!strip' '!debug')
+source=(
+  "pnpm-linux-x64-$pkgver.tar.gz::https://github.com/pnpm/pnpm/releases/download/v$pkgver/pnpm-linux-x64.tar.gz"
+  "LICENSE-$pkgver::https://raw.githubusercontent.com/pnpm/pnpm/v$pkgver/LICENSE"
+  'pnpx'
+)
+# Archive digest from the corresponding GitHub Release asset.
+sha256sums=(
+  'b4f58449ac02d9d24023ac89e17e05e8331f8ddc12ca1f489cf231bc2bb2bce1'
+  '4b8e2a57502758b2d034ece9cabf19dd098c5609003ed8dbdafd085274f25bd9'
+  '61c17a8dd380ecc6b76ea386b3e5e57d553462967381f3a39b3419d0798e67db'
+)
+
+check() {
+  local actual
+  actual=$("$srcdir/pnpm" --version)
+  if [[ $actual != "$pkgver" ]]; then
+    printf 'Expected pnpm %s, got %s\n' "$pkgver" "$actual" >&2
+    return 1
+  fi
+  test -x "$srcdir/dist/node-gyp-bin/node-gyp"
+  test -f "$srcdir/dist/node_modules/node-gyp/bin/node-gyp.js"
+}
+
+package() {
+  install -Dm755 pnpm "$pkgdir/usr/lib/pnpm/pnpm"
+  cp -r dist "$pkgdir/usr/lib/pnpm/"
+  chmod -R a+rX "$pkgdir/usr/lib/pnpm/dist"
+
+  install -d "$pkgdir/usr/bin"
+  ln -s ../lib/pnpm/pnpm "$pkgdir/usr/bin/pnpm"
+  ln -s pnpm "$pkgdir/usr/bin/pn"
+  install -m755 pnpx "$pkgdir/usr/bin/pnpx"
+  ln -s pnpx "$pkgdir/usr/bin/pnx"
+
+  install -Dm644 "LICENSE-$pkgver" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

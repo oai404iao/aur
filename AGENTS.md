@@ -9,6 +9,7 @@
 | --- | --- |
 | `dingtalk-bin/` | AUR 钉钉打包及本地启动器、桌面集成修复 |
 | `shardbrowser/` | `shardx-launcher-bin`，目录名不等于包名；从 GitHub Releases 更新 |
+| `pnpm-bin/` | pnpm 上游 Linux x64 二进制包；更新与切回官方包见包内 README |
 | `Makefile` | 包清单 `PACKAGES`、统一检查、元数据生成和按包构建入口 |
 | `README.md` | monorepo 工作流、远程配置和完整的 subtree 同步步骤 |
 
@@ -23,10 +24,11 @@
 | 命令 | 行为与边界 |
 | --- | --- |
 | `make` | 显示帮助，无下载、构建或安装 |
-| `make check` | 离线检查 Shell 语法、两个包的 `.SRCINFO` 一致性、钉钉桌面入口及启动器回归测试 |
-| `make srcinfo` | 从两个 PKGBUILD 重新生成各自的 `.SRCINFO`，会写文件 |
+| `make check` | 离线检查 Shell 语法、所有包的 `.SRCINFO` 一致性、钉钉桌面入口及启动器回归测试 |
+| `make srcinfo` | 从所有 PKGBUILD 重新生成各自的 `.SRCINFO`，会写文件 |
 | `make build-dingtalk-bin` | 在钉钉目录运行 `makepkg`；可能下载源码，不安装依赖或应用 |
 | `make build-shardbrowser` | 在 ShardX 目录运行 `makepkg`；可能下载源码，不安装依赖或应用 |
+| `make build-pnpm-bin` | 构建上游 pnpm 二进制包并核对实际版本；不安装 |
 | `git diff --check` | 检查差异中的空白问题 |
 
 - 检查依赖 Bash、make、makepkg、diff、desktop-file-validate 和 uv。
@@ -72,7 +74,7 @@
 - GitHub 推送与 AUR 发布是两件事。需要同步 GitHub 且已获授权时，
   显式使用 `git push origin main`；当前本机 `push.default=nothing`。
 
-## 两个包的关键约束
+## 各包的关键约束
 
 ### 钉钉
 
@@ -98,6 +100,14 @@
 - 脚本以 Release API 的 digest 验证下载；缺少 digest 的确认不应被
   `--force` 自动跳过。更新后人工审阅差异，回根目录生成 `.SRCINFO` 并验证。
 - 这是软件 Release 更新流程，不要把 `shardbrowser/` 当成另一份 AUR remote。
+
+### pnpm-bin
+
+- 固定上游正式发行版及 SHA-256，归档校验值须核对 GitHub Release API 的 digest。
+- 保留主程序相邻的完整 `dist/`；`pnpx`、`pnx` 必须包装为 `pnpm dlx`，
+  不能假设主程序按软链接名自动切换行为。
+- 保留 `check()` 的实际版本断言，防止包版本和二进制版本不一致。
+- 目前只支持 x86_64；不要把本机验证表述为跨架构或干净 chroot 验证。
 
 ## 本地文件与临时工作
 

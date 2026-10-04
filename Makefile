@@ -2,7 +2,7 @@ SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 .DEFAULT_GOAL := help
 
-PACKAGES := dingtalk-bin shardbrowser
+PACKAGES := dingtalk-bin shardbrowser pnpm-bin
 BUILD_TARGETS := $(addprefix build-,$(PACKAGES))
 
 .PHONY: help check srcinfo $(BUILD_TARGETS)
@@ -10,9 +10,10 @@ BUILD_TARGETS := $(addprefix build-,$(PACKAGES))
 help:
 	@printf '%s\n' \
 		'make check                 Check syntax, metadata and launcher tests (offline)' \
-		'make srcinfo               Regenerate .SRCINFO for both packages' \
+		'make srcinfo               Regenerate .SRCINFO for all packages' \
 		'make build-dingtalk-bin    Build DingTalk without installing it' \
-		'make build-shardbrowser    Build ShardX Launcher without installing it'
+		'make build-shardbrowser    Build ShardX Launcher without installing it' \
+		'make build-pnpm-bin        Build upstream pnpm without installing it'
 
 check:
 	@for package in $(PACKAGES); do \
@@ -20,6 +21,7 @@ check:
 		(cd "$$package" && makepkg --printsrcinfo) | diff -u "$$package/.SRCINFO" -; \
 	done
 	@bash -n dingtalk-bin/dingtalk.sh shardbrowser/update-pkgbuild.sh shardbrowser/shardx-launcher-bin.install
+	@sh -n pnpm-bin/pnpx
 	@desktop-file-validate dingtalk-bin/com.alibabainc.dingtalk.desktop
 	@umask 077; \
 		scratch_root="$$HOME/.local/state/agents/tmp"; \

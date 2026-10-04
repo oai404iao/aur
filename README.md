@@ -7,6 +7,7 @@
 | --- | --- | --- |
 | [`dingtalk-bin/`](dingtalk-bin/) | `dingtalk-bin` | AUR 打包提交 + 本地桌面适配 |
 | [`shardbrowser/`](shardbrowser/) | `shardx-launcher-bin` | ProxyShard/ShardBrowser 的 GitHub Releases |
+| [`pnpm-bin/`](pnpm-bin/) | `pnpm-bin` | pnpm 官方 GitHub Releases 的 Linux x64 二进制 |
 
 钉钉的本地修复、运行限制及测试记录见
 [`dingtalk-bin/README.md`](dingtalk-bin/README.md)。
@@ -18,9 +19,10 @@
 ```sh
 make                       # 显示帮助，不下载或安装
 make check                 # 离线语法、.SRCINFO 一致性、桌面入口和启动器测试
-make srcinfo               # 修改 PKGBUILD 后重新生成两个包的 .SRCINFO
+make srcinfo               # 修改 PKGBUILD 后重新生成所有包的 .SRCINFO
 make build-dingtalk-bin     # makepkg 构建，不安装
 make build-shardbrowser
+make build-pnpm-bin
 ```
 
 检查需要 Bash、make、makepkg、diff、desktop-file-validate 和 uv。
@@ -98,6 +100,11 @@ make build-shardbrowser
 缺少 digest 时会要求确认。它会修改 PKGBUILD，不会替你提交，
 需人工审阅版本、校验值和实际构建结果；不要为省事使用 `--force`。
 脚本还需要 curl 和 jq。本次迁移未改写它的行为。
+
+## 管理 pnpm-bin
+
+pnpm-bin 的安装、版本更新及切回官方包步骤见
+[`pnpm-bin/README.md`](pnpm-bin/README.md)。它是本地新增包，不使用 subtree 同步。
 
 ## 历史迁移
 
