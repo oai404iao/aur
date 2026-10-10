@@ -1,0 +1,7 @@
+nodeLinker: hoisted
+packageImportMethod: copy
+ignoreScripts: true
+engineStrict: true
+registry: https://registry.npmjs.org/
+overrides:
+  protobufjs: 7.6.6

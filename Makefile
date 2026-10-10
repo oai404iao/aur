@@ -2,7 +2,7 @@ SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 .DEFAULT_GOAL := help
 
-PACKAGES := dingtalk-bin shardbrowser pnpm-bin
+PACKAGES := dingtalk-bin shardbrowser pnpm-bin pi
 BUILD_TARGETS := $(addprefix build-,$(PACKAGES))
 
 .PHONY: help check srcinfo $(BUILD_TARGETS)
@@ -13,7 +13,8 @@ help:
 		'make srcinfo               Regenerate .SRCINFO for all packages' \
 		'make build-dingtalk-bin    Build DingTalk without installing it' \
 		'make build-shardbrowser    Build ShardX Launcher without installing it' \
-		'make build-pnpm-bin        Build upstream pnpm without installing it'
+		'make build-pnpm-bin        Build upstream pnpm without installing it' \
+		'make build-pi              Package Pi using pnpm, without installing it'
 
 check:
 	@for package in $(PACKAGES); do \
@@ -22,6 +23,7 @@ check:
 	done
 	@bash -n dingtalk-bin/dingtalk.sh shardbrowser/update-pkgbuild.sh shardbrowser/shardx-launcher-bin.install
 	@sh -n pnpm-bin/pnpx
+	@node --check pi/check-package.mjs
 	@desktop-file-validate dingtalk-bin/com.alibabainc.dingtalk.desktop
 	@umask 077; \
 		scratch_root="$$HOME/.local/state/agents/tmp"; \

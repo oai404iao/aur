@@ -1,0 +1,63 @@
+# Maintainer: oai404iao <oai404iao@zensky.top>
+
+pkgname=pi
+pkgver=1.1.0
+pkgrel=1
+pkgdesc='AI coding agent for the terminal (upstream packages, pnpm-managed dependencies)'
+arch=('x86_64')
+url='https://github.com/earendil-works/pi'
+license=('MIT')
+depends=('nodejs>=22.19.0' 'libxcb')
+makedepends=('pnpm>=12')
+optdepends=(
+  'npm: pi install and upstream npm-based package operations'
+  'git: install Pi packages from Git repositories'
+  'tmux: background bash capabilities'
+  'fd: system-provided backend for the find tool'
+  'ripgrep: system-provided backend for the grep tool'
+)
+options=('!strip' '!debug')
+source=(
+  "pi-install-$pkgver.json::$url/releases/download/v$pkgver/pi-coding-agent-install-package.json"
+  "LICENSE-$pkgver::https://raw.githubusercontent.com/earendil-works/pi/v$pkgver/LICENSE"
+  'pnpm-lock.yaml'
+  'pnpm-workspace.yaml'
+  'check-package.mjs'
+)
+# Install manifest digest is verified against the GitHub Release API.
+# Registry artifacts (including Pi itself) are integrity-pinned in pnpm-lock.yaml.
+sha256sums=(
+  '3ec8bbe1bccbf4284d816a7defc2185c1f7e0d81df10b8dc1fb84743f23175f9'
+  '0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48'
+  'b5b57c683855a8181e530ae3c8acdd4d5ef203473b9f52628898075498e094f6'
+  '0950b9042b0a2d640b4dc3cd73d6be22f4df5faeac4a54195a563422a12b4639'
+  'a4e1df2e29596005bb8546a77458b51052f1c588bddd8211816475f69f0f4c96'
+)
+
+prepare() {
+  mkdir -p "$srcdir/install"
+  cp "$srcdir/pi-install-$pkgver.json" "$srcdir/install/package.json"
+  cp "$srcdir/pnpm-lock.yaml" "$srcdir/pnpm-workspace.yaml" "$srcdir/install/"
+
+  cd "$srcdir/install"
+  pnpm --store-dir "$srcdir/pnpm-store" install \
+    --prod --frozen-lockfile --ignore-scripts --ignore-pnpmfile
+}
+
+check() {
+  node "$srcdir/check-package.mjs" "$srcdir/install" "$pkgver"
+}
+
+package() {
+  install -d "$pkgdir/usr/lib/pi" "$pkgdir/usr/bin" "$pkgdir/usr/share/doc"
+  cp -a "$srcdir/install/node_modules" "$pkgdir/usr/lib/pi/"
+  # pnpm's install-state files contain build-machine paths, not runtime data.
+  rm -f "$pkgdir/usr/lib/pi/node_modules/.modules.yaml" \
+    "$pkgdir/usr/lib/pi/node_modules/.pnpm-workspace-state-v1.json"
+  chmod -R a+rX "$pkgdir/usr/lib/pi"
+
+  local agent_dir=lib/pi/node_modules/@earendil-works/pi-coding-agent
+  ln -s "../$agent_dir/dist/bundle/cli.js" "$pkgdir/usr/bin/pi"
+  ln -s "../../$agent_dir" "$pkgdir/usr/share/doc/pi"
+  install -Dm644 "$srcdir/LICENSE-$pkgver" "$pkgdir/usr/share/licenses/pi/LICENSE"
+}

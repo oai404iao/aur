@@ -1,0 +1,29 @@
+pkgbase = pi
+	pkgdesc = AI coding agent for the terminal (upstream packages, pnpm-managed dependencies)
+	pkgver = 1.1.0
+	pkgrel = 1
+	url = https://github.com/earendil-works/pi
+	arch = x86_64
+	license = MIT
+	makedepends = pnpm>=12
+	depends = nodejs>=22.19.0
+	depends = libxcb
+	optdepends = npm: pi install and upstream npm-based package operations
+	optdepends = git: install Pi packages from Git repositories
+	optdepends = tmux: background bash capabilities
+	optdepends = fd: system-provided backend for the find tool
+	optdepends = ripgrep: system-provided backend for the grep tool
+	options = !strip
+	options = !debug
+	source = pi-install-1.1.0.json::https://github.com/earendil-works/pi/releases/download/v1.1.0/pi-coding-agent-install-package.json
+	source = LICENSE-1.1.0::https://raw.githubusercontent.com/earendil-works/pi/v1.1.0/LICENSE
+	source = pnpm-lock.yaml
+	source = pnpm-workspace.yaml
+	source = check-package.mjs
+	sha256sums = 3ec8bbe1bccbf4284d816a7defc2185c1f7e0d81df10b8dc1fb84743f23175f9
+	sha256sums = 0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48
+	sha256sums = b5b57c683855a8181e530ae3c8acdd4d5ef203473b9f52628898075498e094f6
+	sha256sums = 0950b9042b0a2d640b4dc3cd73d6be22f4df5faeac4a54195a563422a12b4639
+	sha256sums = a4e1df2e29596005bb8546a77458b51052f1c588bddd8211816475f69f0f4c96
+
+pkgname = pi

@@ -8,6 +8,7 @@
 | [`dingtalk-bin/`](dingtalk-bin/) | `dingtalk-bin` | AUR 打包提交 + 本地桌面适配 |
 | [`shardbrowser/`](shardbrowser/) | `shardx-launcher-bin` | ProxyShard/ShardBrowser 的 GitHub Releases |
 | [`pnpm-bin/`](pnpm-bin/) | `pnpm-bin` | pnpm 官方 GitHub Releases 的 Linux x64 二进制 |
+| [`pi/`](pi/) | `pi` | Pi 官方发布的 npm 包，通过 pnpm 固定生产依赖 |
 
 钉钉的本地修复、运行限制及测试记录见
 [`dingtalk-bin/README.md`](dingtalk-bin/README.md)。
@@ -23,9 +24,10 @@ make srcinfo               # 修改 PKGBUILD 后重新生成所有包的 .SRCINF
 make build-dingtalk-bin     # makepkg 构建，不安装
 make build-shardbrowser
 make build-pnpm-bin
+make build-pi
 ```
 
-检查需要 Bash、make、makepkg、diff、desktop-file-validate 和 uv。
+检查需要 Bash、make、makepkg、diff、desktop-file-validate、uv 和 Node.js。
 `make check` 不下载源码、不验证源码校验值，也不替代完整构建或干净 chroot 测试。
 实际构建由 makepkg 检查依赖和源文件校验；缺依赖时先审阅，再按需安装。
 没有自动安装、发布、清理构建产物或静默更新的目标。
@@ -105,6 +107,12 @@ make build-shardbrowser
 
 pnpm-bin 的安装、版本更新及切回官方包步骤见
 [`pnpm-bin/README.md`](pnpm-bin/README.md)。它是本地新增包，不使用 subtree 同步。
+
+## 管理 pi
+
+[`pi/README.md`](pi/README.md) 说明如何使用 pnpm 固定上游发布包的生产依赖，
+构建本地 `pi` 包，以及如何更新和切回仓库包。pnpm 只用于打包，
+不修改 Pi 内部包管理行为；构建不会安装或替换正在运行的 Pi。
 
 ## 历史迁移
 
