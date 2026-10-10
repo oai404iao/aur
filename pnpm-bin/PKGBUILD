@@ -1,7 +1,7 @@
 # Maintainer: oai404iao <oai404iao@zensky.top>
 
 pkgname=pnpm-bin
-pkgver=12.9.1
+pkgver=12.10.1
 pkgrel=1
 pkgdesc='Fast, disk space efficient package manager (upstream binary)'
 arch=('x86_64')
@@ -24,7 +24,7 @@ source=(
 )
 # Archive digest from the corresponding GitHub Release asset.
 sha256sums=(
-  'b4f58449ac02d9d24023ac89e17e05e8331f8ddc12ca1f489cf231bc2bb2bce1'
+  '502a275984a4cd01e5579ac72049a241091cac5118e44becf84951130c3e079e'
   '4b8e2a57502758b2d034ece9cabf19dd098c5609003ed8dbdafd085274f25bd9'
   '61c17a8dd380ecc6b76ea386b3e5e57d553462967381f3a39b3419d0798e67db'
 )

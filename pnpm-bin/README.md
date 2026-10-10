@@ -14,7 +14,7 @@
 make check
 make build-pnpm-bin
 # 人工确认后安装；pacman 会提示移除冲突的 pnpm。
-sudo pacman -U pnpm-bin/pnpm-bin-12.9.1-1-x86_64.pkg.tar.zst
+sudo pacman -U pnpm-bin/pnpm-bin-12.10.1-1-x86_64.pkg.tar.zst
 pnpm --version
 ```
 

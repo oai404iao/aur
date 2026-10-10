@@ -1,6 +1,6 @@
 pkgbase = pnpm-bin
 	pkgdesc = Fast, disk space efficient package manager (upstream binary)
-	pkgver = 12.9.1
+	pkgver = 12.10.1
 	pkgrel = 1
 	url = https://pnpm.io
 	arch = x86_64
@@ -11,14 +11,14 @@ pkgbase = pnpm-bin
 	optdepends = python: build native addons with bundled node-gyp
 	optdepends = make: build native addons
 	optdepends = gcc: build native addons
-	provides = pnpm=12.9.1
+	provides = pnpm=12.10.1
 	conflicts = pnpm
 	options = !strip
 	options = !debug
-	source = pnpm-linux-x64-12.9.1.tar.gz::https://github.com/pnpm/pnpm/releases/download/v12.9.1/pnpm-linux-x64.tar.gz
-	source = LICENSE-12.9.1::https://raw.githubusercontent.com/pnpm/pnpm/v12.9.1/LICENSE
+	source = pnpm-linux-x64-12.10.1.tar.gz::https://github.com/pnpm/pnpm/releases/download/v12.10.1/pnpm-linux-x64.tar.gz
+	source = LICENSE-12.10.1::https://raw.githubusercontent.com/pnpm/pnpm/v12.10.1/LICENSE
 	source = pnpx
-	sha256sums = b4f58449ac02d9d24023ac89e17e05e8331f8ddc12ca1f489cf231bc2bb2bce1
+	sha256sums = 502a275984a4cd01e5579ac72049a241091cac5118e44becf84951130c3e079e
 	sha256sums = 4b8e2a57502758b2d034ece9cabf19dd098c5609003ed8dbdafd085274f25bd9
 	sha256sums = 61c17a8dd380ecc6b76ea386b3e5e57d553462967381f3a39b3419d0798e67db
 
