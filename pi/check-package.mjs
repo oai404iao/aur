@@ -42,8 +42,6 @@ for (const [flag, check] of [
 const sdk = await import(pathToFileURL(path.join(agent, "dist/index.js")));
 assert.equal(typeof sdk.createAgentSession, "function");
 const require = createRequire(path.join(agent, "package.json"));
-const esbuild = require("esbuild");
-assert.match(esbuild.transformSync("const n: number = 1", { loader: "ts" }).code, /const n = 1/);
 require("@silvia-odwyer/photon-node"); // Loads the image-processing WASM.
 require(path.join(modules, "@earendil-works/pi-tui/native/linux/prebuilds/linux-x64/linux-platform-x11.node"));
 
@@ -66,4 +64,4 @@ function checkLinks(dir) {
   }
 }
 checkLinks(modules);
-console.log(`Pi ${version}: CLI, SDK, esbuild, WASM, native module, assets and symlinks OK`);
+console.log(`Pi ${version}: CLI, SDK, WASM, native module, assets and symlinks OK`);

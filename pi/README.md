@@ -17,7 +17,7 @@
 make check
 make build-pi
 # 人工确认后安装；与 AUR/archlinuxcn 的 pi 同名，按普通包升级替换。
-sudo pacman -U pi/pi-1.1.0-1-x86_64.pkg.tar.zst
+sudo pacman -U pi/pi-1.2.0-1-x86_64.pkg.tar.zst
 pi --version
 ```
 
@@ -48,7 +48,7 @@ pi --version
 
 `make check` 只做离线静态检查。
 `make build-pi` 的 `check()` 才会实际验证 CLI 版本与 help、SDK 导入、
-esbuild、图像 WASM、Linux native 模块、必需资源及依赖链接是否留在安装树内。
+图像 WASM、Linux native 模块、必需资源及依赖链接是否留在安装树内。
 测试在独立临时配置下运行，不发起模型调用，测试目录保留。
 这些检查不等于交互功能、全部扩展、其他架构或干净 chroot 验证。
 
@@ -75,10 +75,11 @@ esbuild、图像 WASM、Linux native 模块、必需资源及依赖链接是否�
    检查包内容，尤其是可执行入口、SDK、native 模块、文档及依赖链接；
    安装前应从独立解包目录再运行一次 `check-package.mjs <解包目录>/usr/lib/pi <VERSION>`。
 
-当前 `1.1.0` 的上游安装锁文件 SHA-256 为
-`89a53fa67297177bad42d71e9eb9c7eaeb9c7fc34d3cfb6800c1b38fbc293ebb`；
-由 pnpm `12.9.1` 转换，146 个唯一包版本与上游锁一致。
-其中 8 个 Pi 自有包的 integrity 来自 npm registry，上游安装锁未提供它们。
+当前 `1.2.0` 的上游安装锁文件 SHA-256 为
+`bc9ff0d86d27b10771bdc9c27a1620e4817e1f2749e817245af95809eabf63c3`；
+由 pnpm `12.9.1` 转换，118 个唯一包版本与上游锁一致。
+其中 7 个 Pi 自有包的 integrity 来自 npm registry，上游安装锁未提供它们。
+上游已移除 `@earendil-works/chord` 和 esbuild，因此不再打包或测试 esbuild。
 
 ## 切回仓库包
 
