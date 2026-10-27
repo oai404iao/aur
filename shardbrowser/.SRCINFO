@@ -1,6 +1,6 @@
 pkgbase = shardx-launcher-bin
 	pkgdesc = Anti-detect browser launcher for the ShardX Chromium engine
-	pkgver = 2.0.3
+	pkgver = 2.1.2
 	pkgrel = 1
 	url = https://github.com/ProxyShard/ShardBrowser
 	install = shardx-launcher-bin.install
@@ -30,16 +30,16 @@ pkgbase = shardx-launcher-bin
 	depends = unzip
 	depends = webkit2gtk-4.1
 	optdepends = xdg-utils: open external links from the launcher
-	provides = shardx-launcher=2.0.3
-	provides = shard-x-launcher=2.0.3
+	provides = shardx-launcher=2.1.2
+	provides = shard-x-launcher=2.1.2
 	conflicts = shardx-launcher
 	conflicts = shard-x-launcher
-	noextract = ShardX.Launcher_2.0.3_amd64.deb
+	noextract = ShardBrowser.Launcher_2.1.2_amd64.deb
 	options = !strip
 	options = !debug
-	source = ShardX.Launcher_2.0.3_amd64.deb::https://github.com/ProxyShard/ShardBrowser/releases/download/v2.0.3/ShardX.Launcher_2.0.3_amd64.deb
-	source = LICENSE::https://raw.githubusercontent.com/ProxyShard/ShardBrowser/v2.0.3/LICENSE
-	sha256sums = ebeaac02945a8d528145e8afcf794995430a3e95762bbf1090c3a5d137e2a868
+	source = ShardBrowser.Launcher_2.1.2_amd64.deb::https://github.com/ProxyShard/ShardBrowser/releases/download/v2.1.2/ShardBrowser.Launcher_2.1.2_amd64.deb
+	source = LICENSE::https://raw.githubusercontent.com/ProxyShard/ShardBrowser/v2.1.2/LICENSE
+	sha256sums = 499a74fa9344c1715b3d545677efe1b94e91f7abe157a18aa22d212217408039
 	sha256sums = 2025860f56aed0594d00ae13af01f36529e4dc46f1967f7f274b33631f94edb1
 
 pkgname = shardx-launcher-bin

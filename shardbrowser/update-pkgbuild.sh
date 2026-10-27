@@ -24,7 +24,7 @@ version=${tag#v}
 
 echo "=> 最新版本: ${version}"
 
-debfile="ShardX.Launcher_${version}_amd64.deb"
+debfile="ShardBrowser.Launcher_${version}_amd64.deb"
 deburl="https://github.com/${repo}/releases/download/${tag}/${debfile}"
 
 # 从 GitHub API 读取官方 digest
