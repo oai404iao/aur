@@ -17,7 +17,7 @@
 make check
 make build-pi
 # 人工确认后安装；与 AUR/archlinuxcn 的 pi 同名，按普通包升级替换。
-sudo pacman -U pi/pi-1.3.0-1-x86_64.pkg.tar.zst
+sudo pacman -U pi/pi-1.4.0-1-x86_64.pkg.tar.zst
 pi --version
 ```
 
@@ -75,9 +75,9 @@ pi --version
    检查包内容，尤其是可执行入口、SDK、native 模块、文档及依赖链接；
    安装前应从独立解包目录再运行一次 `check-package.mjs <解包目录>/usr/lib/pi <VERSION>`。
 
-当前 `1.3.0` 的上游安装锁文件 SHA-256 为
-`65eacda789c30e1c3859a96eee2fd53cf4a18629d27dcf2aa6d7bdb3da02d719`；
-由 pnpm `12.10.1` 转换，118 个唯一包版本与上游锁一致。
+当前 `1.4.0` 的上游安装锁文件 SHA-256 为
+`eb2c76ac270f099f2af3cbc6ccd08c3d22bf562b914af3690d1abba985461ade`；
+由 pnpm `12.10.1` 转换，119 个唯一包版本与上游锁一致。
 其中 7 个 Pi 自有包的 integrity 来自 npm registry，上游安装锁未提供它们。
 上游已移除 `@earendil-works/chord` 和 esbuild，因此不再打包或测试 esbuild。
 

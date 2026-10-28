@@ -1,7 +1,7 @@
 # Maintainer: oai404iao <oai404iao@zensky.top>
 
 pkgname=pi
-pkgver=1.3.0
+pkgver=1.4.0
 pkgrel=1
 pkgdesc='AI coding agent for the terminal (upstream packages, pnpm-managed dependencies)'
 arch=('x86_64')
@@ -27,9 +27,9 @@ source=(
 # Install manifest digest is verified against the GitHub Release API.
 # Registry artifacts (including Pi itself) are integrity-pinned in pnpm-lock.yaml.
 sha256sums=(
-  'efa2ca2695c003c92febb3bca40c5de5f94d43a8aa78e1ba88420b30156d5e21'
+  '9792b34aba5a94320fde5c68600eac4a5720d0d63ebc527d462bd125665b29ee'
   '0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48'
-  'fc7f9635b6194e5f21c976698a86474e781391455be9b8a1b1ef235790e1955c'
+  'f20163577eab5cb8455eb05df2fd7f02afe6eb7fa12c7237ab92709bf0c45b77'
   '0950b9042b0a2d640b4dc3cd73d6be22f4df5faeac4a54195a563422a12b4639'
   '950728f85c597d2b592d39c1ef2f08d8f5e7641cbc5a98119549d557e5ede13d'
 )
