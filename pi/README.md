@@ -17,7 +17,7 @@
 make check
 make build-pi
 # 人工确认后安装；与 AUR/archlinuxcn 的 pi 同名，按普通包升级替换。
-sudo pacman -U pi/pi-1.4.0-1-x86_64.pkg.tar.zst
+sudo pacman -U pi/pi-1.5.0-1-x86_64.pkg.tar.zst
 pi --version
 ```
 
@@ -75,11 +75,16 @@ pi --version
    检查包内容，尤其是可执行入口、SDK、native 模块、文档及依赖链接；
    安装前应从独立解包目录再运行一次 `check-package.mjs <解包目录>/usr/lib/pi <VERSION>`。
 
-当前 `1.4.0` 的上游安装锁文件 SHA-256 为
-`eb2c76ac270f099f2af3cbc6ccd08c3d22bf562b914af3690d1abba985461ade`；
-由 pnpm `12.10.1` 转换，119 个唯一包版本与上游锁一致。
-其中 7 个 Pi 自有包的 integrity 来自 npm registry，上游安装锁未提供它们。
+当前 `1.5.0` 的上游安装锁文件 SHA-256 为
+`d3d2abb9ed4e078b7978ecd0f6316cc4357cb8d7777d344020acfa23190e24b4`；
+由 pnpm `12.15.0` 转换，121 个唯一包版本与上游锁一致。
+其中 8 个 Pi 自有包的 integrity 来自 npm registry，上游安装锁未提供它们。
 上游已移除 `@earendil-works/chord` 和 esbuild，因此不再打包或测试 esbuild。
+
+Version `1.5.0` validates tool arguments with `pi-schema`. TypeBox features
+outside JSON Schema (`Type.Refine()`, `Type.BigInt()`, `Type.Undefined()`,
+codecs and `Format.Set()`) no longer apply. Review the upstream release's
+Breaking Changes before upgrading extensions.
 
 ## 切回仓库包
 
