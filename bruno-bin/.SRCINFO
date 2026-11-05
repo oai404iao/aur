@@ -1,0 +1,34 @@
+pkgbase = bruno-bin
+	pkgdesc = API client for exploring and testing APIs (official binary, updates and telemetry disabled)
+	pkgver = 4.3.0
+	pkgrel = 1
+	url = https://www.usebruno.com
+	arch = x86_64
+	license = MIT
+	makedepends = asar
+	makedepends = python
+	makedepends = nodejs
+	depends = alsa-lib
+	depends = at-spi2-core
+	depends = gcc-libs
+	depends = glibc
+	depends = gtk3
+	depends = libnotify
+	depends = libsecret
+	depends = libxss
+	depends = libxtst
+	depends = nss
+	depends = util-linux-libs
+	depends = xdg-utils
+	provides = bruno=4.3.0
+	conflicts = bruno
+	options = !strip
+	options = !debug
+	source = https://github.com/usebruno/bruno/releases/download/v4.3.0/bruno_4.3.0_amd64_linux.deb
+	source = LICENSE-4.3.0::https://raw.githubusercontent.com/usebruno/bruno/v4.3.0/license.md
+	source = privacy.py
+	sha256sums = 45117e3cc3c221801d10c8984c8e796f11bdf16d28e3a51b35e976603d3c3a02
+	sha256sums = 8891070a847e5047bf77d38d88d7dfbab1beab41e37c802b9f5b23f2bbb9c7be
+	sha256sums = f18441c19b84985aef27373df49adeee1985550c4bf3595f66d8c88f99c663c2
+
+pkgname = bruno-bin

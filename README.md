@@ -9,6 +9,7 @@
 | [`shardbrowser/`](shardbrowser/) | `shardx-launcher-bin` | ProxyShard/ShardBrowser 的 GitHub Releases |
 | [`pnpm-bin/`](pnpm-bin/) | `pnpm-bin` | pnpm 官方 GitHub Releases 的 Linux x64 二进制 |
 | [`pi/`](pi/) | `pi` | Pi 官方发布的 npm 包，通过 pnpm 固定生产依赖 |
+| [`bruno-bin/`](bruno-bin/) | `bruno-bin` | Bruno 官方 GitHub Releases 的 Linux x64 DEB，本地禁用更新及遥测 |
 
 钉钉的本地修复、运行限制及测试记录见
 [`dingtalk-bin/README.md`](dingtalk-bin/README.md)。
@@ -25,6 +26,7 @@ make build-dingtalk-bin     # makepkg 构建，不安装
 make build-shardbrowser
 make build-pnpm-bin
 make build-pi
+make build-bruno-bin
 ```
 
 检查需要 Bash、make、makepkg、diff、desktop-file-validate、uv 和 Node.js。
@@ -113,6 +115,11 @@ pnpm-bin 的安装、版本更新及切回官方包步骤见
 [`pi/README.md`](pi/README.md) 说明如何使用 pnpm 固定上游发布包的生产依赖，
 构建本地 `pi` 包，以及如何更新和切回仓库包。pnpm 只用于打包，
 不修改 Pi 内部包管理行为；构建不会安装或替换正在运行的 Pi。
+
+## 管理 Bruno
+
+[`bruno-bin/README.md`](bruno-bin/README.md) 记录官方二进制打包、默认禁用
+自动更新和遥测的实现依据、更新步骤及验证边界。不使用 AUR subtree 同步。
 
 ## 历史迁移
 

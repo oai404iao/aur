@@ -1,0 +1,53 @@
+# Maintainer: oai404iao <oai404iao@zensky.top>
+
+pkgname=bruno-bin
+pkgver=4.3.0
+pkgrel=1
+pkgdesc='API client for exploring and testing APIs (official binary, updates and telemetry disabled)'
+arch=('x86_64')
+url='https://www.usebruno.com'
+license=('MIT')
+depends=('alsa-lib' 'at-spi2-core' 'gcc-libs' 'glibc' 'gtk3' 'libnotify'
+         'libsecret' 'libxss' 'libxtst' 'nss' 'util-linux-libs' 'xdg-utils')
+makedepends=('asar' 'python' 'nodejs')
+provides=("bruno=$pkgver")
+conflicts=('bruno')
+options=('!strip' '!debug')
+source=(
+  "https://github.com/usebruno/bruno/releases/download/v$pkgver/bruno_${pkgver}_amd64_linux.deb"
+  "LICENSE-$pkgver::https://raw.githubusercontent.com/usebruno/bruno/v$pkgver/license.md"
+  'privacy.py'
+)
+# DEB SHA-256 verified against the official GitHub Release asset digest.
+sha256sums=(
+  '45117e3cc3c221801d10c8984c8e796f11bdf16d28e3a51b35e976603d3c3a02'
+  '8891070a847e5047bf77d38d88d7dfbab1beab41e37c802b9f5b23f2bbb9c7be'
+  'f18441c19b84985aef27373df49adeee1985550c4bf3595f66d8c88f99c663c2'
+)
+
+prepare() {
+  mkdir -p upstream
+  bsdtar -xf data.tar.xz -C upstream
+  asar extract upstream/opt/Bruno/resources/app.asar app
+  python privacy.py patch app
+  printf '{}\n' > upstream/opt/Bruno/resources/portable.json
+  rm upstream/opt/Bruno/resources/app-update.yml
+  asar pack app upstream/opt/Bruno/resources/app.asar
+}
+
+check() {
+  # Inspect the repacked archive, not just the intermediate sources.
+  asar extract upstream/opt/Bruno/resources/app.asar checked-app
+  python privacy.py check checked-app "$pkgver"
+  test -f upstream/opt/Bruno/resources/portable.json
+  test ! -e upstream/opt/Bruno/resources/app-update.yml
+}
+
+package() {
+  cp -a upstream/opt upstream/usr "$pkgdir/"
+  install -d "$pkgdir/usr/bin"
+  ln -s /opt/Bruno/bruno "$pkgdir/usr/bin/bruno"
+  # Keep Chromium's sandbox available without disabling it in a wrapper.
+  chmod 4755 "$pkgdir/opt/Bruno/chrome-sandbox"
+  install -Dm644 "LICENSE-$pkgver" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

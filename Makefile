@@ -2,7 +2,7 @@ SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 .DEFAULT_GOAL := help
 
-PACKAGES := dingtalk-bin shardbrowser pnpm-bin pi
+PACKAGES := dingtalk-bin shardbrowser pnpm-bin pi bruno-bin
 BUILD_TARGETS := $(addprefix build-,$(PACKAGES))
 
 .PHONY: help check srcinfo $(BUILD_TARGETS)
@@ -14,7 +14,8 @@ help:
 		'make build-dingtalk-bin    Build DingTalk without installing it' \
 		'make build-shardbrowser    Build ShardX Launcher without installing it' \
 		'make build-pnpm-bin        Build upstream pnpm without installing it' \
-		'make build-pi              Package Pi using pnpm, without installing it'
+		'make build-pi              Package Pi using pnpm, without installing it' \
+		'make build-bruno-bin       Package official Bruno without installing it'
 
 check:
 	@for package in $(PACKAGES); do \
@@ -30,7 +31,8 @@ check:
 		mkdir -p "$$scratch_root"; \
 		task_dir=$$(mktemp -d "$$scratch_root/aur-check.XXXXXXXX"); \
 		printf 'Test fixtures: %s\n' "$$task_dir"; \
-		TMPDIR="$$task_dir" uv run --no-project python dingtalk-bin/tests/test-wrapper.py
+		TMPDIR="$$task_dir" uv run --no-project python dingtalk-bin/tests/test-wrapper.py; \
+		PYTHONDONTWRITEBYTECODE=1 TMPDIR="$$task_dir" uv run --no-project python bruno-bin/test-privacy.py
 
 srcinfo:
 	@for package in $(PACKAGES); do \
