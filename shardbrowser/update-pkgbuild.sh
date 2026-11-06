@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# 自动获取 GitHub 最新 Release 并更新 PKGBUILD
-# 用法: ./update-pkgbuild.sh [--force]
+# 获取 GitHub Release 并更新 PKGBUILD（默认 latest）
+# 用法: ./update-pkgbuild.sh [--tag v<VERSION>]
 #
 # 安全说明：
 #   脚本会从 GitHub Release API 读取 .deb 的 digest（sha256），下载后
@@ -11,21 +11,28 @@ set -euo pipefail
 
 repo='ProxyShard/ShardBrowser'
 pkgbuild='PKGBUILD'
-force=0
-
-if [[ "${1:-}" == '--force' ]]; then
-  force=1
+endpoint=latest
+if [[ $# -ne 0 ]]; then
+  if [[ $# -ne 2 || $1 != --tag || ! $2 =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo '用法: ./update-pkgbuild.sh [--tag v<VERSION>]' >&2
+    exit 1
+  fi
+  endpoint="tags/$2"
 fi
 
-echo '=> 查询最新 release...'
-release_json=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest")
+echo "=> 查询 release: ${endpoint}..."
+release_json=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/${endpoint}")
 tag=$(printf '%s' "$release_json" | jq -r '.tag_name')
 version=${tag#v}
 
-echo "=> 最新版本: ${version}"
+echo "=> 选定版本: ${version}"
 
 debfile="ShardBrowser.Launcher_${version}_amd64.deb"
 deburl="https://github.com/${repo}/releases/download/${tag}/${debfile}"
+if ! printf '%s' "$release_json" | jq -e --arg name "$debfile" '.assets | any(.name == $name)' >/dev/null; then
+  echo "!! release 缺少 ${debfile}" >&2
+  exit 1
+fi
 
 # 从 GitHub API 读取官方 digest
 expected_digest=$(printf '%s' "$release_json" | jq -r --arg name "${debfile}" '.assets[] | select(.name == $name) | .digest')
@@ -33,13 +40,9 @@ expected_digest=$(printf '%s' "$release_json" | jq -r --arg name "${debfile}" '.
 if [[ -z "$expected_digest" || "$expected_digest" == 'null' ]]; then
   echo '!! 上游 release 没有提供该 .deb 的 digest。' >&2
   echo '   本地计算的 hash 只能保证文件完整性，不能保证未被篡改。' >&2
-  if [[ "$force" -eq 0 ]]; then
-    echo -n '   是否仍要更新 PKGBUILD? [y/N] ' >&2
-    read -r ans
-    [[ "$ans" =~ ^[Yy]$ ]] || exit 1
-  else
-    echo '   --force 已设置，跳过确认。' >&2
-  fi
+  echo -n '   是否仍要更新 PKGBUILD? [y/N] ' >&2
+  read -r ans
+  [[ "$ans" =~ ^[Yy]$ ]] || exit 1
   expected_digest=''
 else
   echo "=> 官方 digest: ${expected_digest}"
@@ -78,5 +81,5 @@ sed -i "s/^pkgrel=.*/pkgrel=1/" "${pkgbuild}"
 sed -i "s/${old_deb_sha}/${deb_sha}/" "${pkgbuild}"
 sed -i "s/${old_license_sha}/${license_sha}/" "${pkgbuild}"
 
-echo '=> 完成。请检查 diff 后提交: makepkg -si'
+echo '=> 完成。请检查 diff，再从仓库根目录生成元数据、检查和构建。'
 git diff "${pkgbuild}"

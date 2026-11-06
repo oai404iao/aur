@@ -6,9 +6,9 @@
 pkgname=dingtalk-bin
 _pkgname=dingtalk
 _pkgname2=com.alibabainc.dingtalk
-# https://dtapp-pub.dingtalk.com/dingtalk-desktop/xc_dingtalk_update/linux_deb/Update/other/amd64/linux_dingtalk_update_package_gray.json
-pkgver=8.2.8.260904001
-pkgrel=1.2
+# Default Linux download: https://www.dingtalk.com/win/d/qd=linux_amd64
+pkgver=8.3.1.261008001
+pkgrel=1.1
 pkgdesc="钉钉"
 arch=("x86_64" 'aarch64')
 url="https://www.dingtalk.com/"
@@ -42,13 +42,13 @@ source=("service-terms-zh.html"
     "${_pkgname2}.svg"
 )
 
-# DebSource & pkgver can be get here: https://dtapp-pub.dingtalk.com/dingtalk-desktop/xc_dingtalk_update/linux_deb/Update/other/linux_dingtalk_update.json
+# Verify both default download redirects and the DEB control versions.
 sha512sums=('997fe19e8a056c84a65b3f4c438c0b3e97d1a6acd6f3d17c54846216afb70a757cbc81750712e8a4b8311e46c7cddfb636370355f443fdcaf4322b2dbd206215'
             '87c539df12e76400315af7b9f94a5c259c1a61adf93b6f84442b43bb154d4da7d68cfd6c4d62fe2fe3d50d155fff39fb3989e184252b3de493d44ff28464170e'
             'f9cb5662ecd56a665d49d6cdca2d6d47cd4c7965f3f0b7c5df25d4e77b5e413e29cca82510bd736ab704a73566f69466942cb2e8237352718d2b10035e357606'
             '5f05f90704526fbd16371f6f9deaa171a3cac25a103b21daba72a3028ab7cdf9b566a3ac7842c6ce88d30cc29fe0c8b989c77aa36daab73793a827a1a0d6c775')
-sha512sums_x86_64=('5a1adf50cb7f36443f4b39c436b980fdbbfa50814367f3be8a6a54c67a07cf1dd96c0ecabd08bb60936e46e77d715073ff5f9ec0ce6dc918ba269f8bccd93a2e')
-sha512sums_aarch64=('9778633c98782939f1a7ddf8b9bf44b119ad2fc57dfa925c662977916f98f5e5eead2bf8e5e6ce3a1570a7071785659deb28b70d77b8a8223ffeee933dc6aad6')
+sha512sums_x86_64=('cf2eb13e6095e7bc68a3f0d83ac09aebe1d041ef2b135d3d44f0d3c142199317eb9d391988d2bd76968d5a0db795a1371d6cbfc913c5be6228f4bba836cb6416')
+sha512sums_aarch64=('d2930a76230b5e7996f99a17622ac6763fa0019c2e50cd07fc3abcb1f95a547143ae4e9a60d8f5c125490b8de8fe31d72ddc83ce13791cd850364950984a52bc')
 
 prepare() {
     tar -Jxf data.tar.xz -C "${srcdir}"
