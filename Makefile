@@ -2,7 +2,7 @@ SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 .DEFAULT_GOAL := help
 
-PACKAGES := dingtalk-bin shardbrowser pnpm-bin pi bruno-bin
+PACKAGES := dingtalk-bin shardbrowser pnpm-bin pi bruno-bin rbw
 BUILD_TARGETS := $(addprefix build-,$(PACKAGES))
 
 .PHONY: help check srcinfo $(BUILD_TARGETS)
@@ -15,7 +15,8 @@ help:
 		'make build-shardbrowser    Build ShardX Launcher without installing it' \
 		'make build-pnpm-bin        Build upstream pnpm without installing it' \
 		'make build-pi              Package Pi using pnpm, without installing it' \
-		'make build-bruno-bin       Package official Bruno without installing it'
+		'make build-bruno-bin       Package official Bruno without installing it' \
+		'make build-rbw             Build personal rbw fork without installing it'
 
 check:
 	@for package in $(PACKAGES); do \

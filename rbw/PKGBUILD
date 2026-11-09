@@ -1,0 +1,63 @@
+# Maintainer: oai404iao <oai404iao@zensky.top>
+
+pkgname=rbw-oai404iao-git
+pkgver=1.15.0.r2.g21a26fd
+pkgrel=1
+pkgdesc='Unofficial Bitwarden CLI (personal refresh-token rotation branch)'
+arch=('x86_64')
+url='https://github.com/oai404iao/rbw'
+license=('MIT')
+depends=('glibc' 'gcc-libs' 'pinentry' 'ca-certificates')
+makedepends=('git' 'cargo')
+optdepends=('xdg-utils: open browser for SSO login')
+provides=("rbw=${pkgver%%.r*}")
+conflicts=('rbw')
+# ring's native GCC LTO objects cannot be linked by Rust's LLD linker.
+options=('!lto')
+source=('rbw::git+https://github.com/oai404iao/rbw.git#branch=fix/refresh-token-rotation')
+# Moving Git source: the resolved commit is recorded in pkgver and SOURCE.
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/rbw"
+  git describe --tags --long --match '[0-9]*' | sed -E 's/-([0-9]+)-g([0-9a-f]+)$/.r\1.g\2/; s/-/./g'
+}
+
+prepare() {
+  cd "$srcdir/rbw"
+  cargo fetch --locked
+}
+
+build() {
+  cd "$srcdir/rbw"
+  cargo build --release --frozen --bins
+  mkdir -p target/completion
+  local shell
+  for shell in bash zsh fish; do
+    target/release/rbw gen-completions "$shell" > "target/completion/$shell"
+  done
+}
+
+check() {
+  cd "$srcdir/rbw"
+  target/release/rbw --version
+  test -s target/completion/bash
+  test -s target/completion/zsh
+  test -s target/completion/fish
+}
+
+package() {
+  cd "$srcdir/rbw"
+  install -Dm755 target/release/rbw "$pkgdir/usr/bin/rbw"
+  install -Dm755 target/release/rbw-agent "$pkgdir/usr/bin/rbw-agent"
+  install -Dm644 target/completion/bash "$pkgdir/usr/share/bash-completion/completions/rbw"
+  install -Dm644 target/completion/zsh "$pkgdir/usr/share/zsh/site-functions/_rbw"
+  install -Dm644 target/completion/fish "$pkgdir/usr/share/fish/vendor_completions.d/rbw.fish"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+  install -Dm644 CHANGELOG.md "$pkgdir/usr/share/doc/$pkgname/CHANGELOG.md"
+  {
+    printf 'url=%s\nbranch=%s\ncommit=%s\n' "$url" 'fix/refresh-token-rotation' "$(git rev-parse HEAD)"
+    sha256sum Cargo.lock
+  } > "$pkgdir/usr/share/doc/$pkgname/SOURCE"
+}

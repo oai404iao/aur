@@ -10,6 +10,7 @@
 | [`pnpm-bin/`](pnpm-bin/) | `pnpm-bin` | pnpm 官方 GitHub Releases 的 Linux x64 二进制 |
 | [`pi/`](pi/) | `pi` | Pi 官方发布的 npm 包，通过 pnpm 固定生产依赖 |
 | [`bruno-bin/`](bruno-bin/) | `bruno-bin` | Bruno 官方 GitHub Releases 的 Linux x64 DEB，本地禁用更新及遥测 |
+| [`rbw/`](rbw/) | `rbw-oai404iao-git` | oai404iao/rbw 的 `fix/refresh-token-rotation` 持续维护分支 |
 
 钉钉的本地修复、运行限制及测试记录见
 [`dingtalk-bin/README.md`](dingtalk-bin/README.md)。
@@ -27,6 +28,7 @@ make build-shardbrowser
 make build-pnpm-bin
 make build-pi
 make build-bruno-bin
+make build-rbw
 ```
 
 检查需要 Bash、make、makepkg、diff、desktop-file-validate、uv 和 Node.js。
@@ -120,6 +122,12 @@ pnpm-bin 的安装、版本更新及切回官方包步骤见
 
 [`bruno-bin/README.md`](bruno-bin/README.md) 记录官方二进制打包、默认禁用
 自动更新和遥测的实现依据、更新步骤及验证边界。不使用 AUR subtree 同步。
+
+## 管理 rbw
+
+rbw 个人分支的来源、版本追踪、构建和验证边界见
+[`rbw/README.md`](rbw/README.md)。该包提供并冲突于 `rbw`，构建不会安装或
+替换系统包，也不会启动 agent 或访问真实 vault。
 
 ## 历史迁移
 
